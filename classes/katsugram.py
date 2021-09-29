@@ -1,42 +1,36 @@
 from pyrogram import Client, idle, ContinuePropagation
-
-from classes.js_dict			import js_dict
+import os
 
 from classes.filters 			import myfilters
-from classes.config_messages	import config_messages
 from classes.text_methods		import text_methods
+from classes.important_ids 		import important_ids
+from classes.config_messages	import config_messages
 from classes.switch				import switch_decorator
 
-class app(Client, myfilters, config_messages, switch_decorator, text_methods):
-	id = js_dict(
-		katsu	= 600432868,
-		admins	= {600432868,},
-		config	= -1001328058005,
-		media	= -1001157282357
-	)
-
+class app(Client, myfilters, config_messages, switch_decorator, text_methods, important_ids):
+	
 	switch_value = True
 	ContinuePropagation = ContinuePropagation
 	
-	def start(self):
+	def start(self, func=False):
+		print(os.system('ls /app'), flush=True)
+
 		super().start()
 
 		self.bot = self.get_me()
 
 		self.db_file = f'DB/{self.bot.username}'
+
+		if func: self.db = func(self.db_file) 
 		
-		self.send_awaking_message()
+		self.send_awaking_msg()
 	
 	def close(self):
 		super().close()
 
-	def run(self, func=False):
-		self.start()
-
-		if func: self.db = func(self.db_file) 
-
-		idle()
-
-		self.close()
-
 		if self.db is not None: self.db.close()
+
+	def run(self, func=False):
+		self.start(func)
+		idle()
+		self.close()

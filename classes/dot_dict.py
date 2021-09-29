@@ -1,4 +1,4 @@
-class js_dict(dict):
+class dot_dict(dict):
 	def __getattr__(self, attr):
 		return self[attr]
 	def __setattr__(self, attr, value):
